@@ -1,0 +1,104 @@
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+cc_shared_library(
+    name = "injection_shared_using_rules_cuda",
+    shared_lib_name = "libinjection.so",
+    deps = [":injection_using_rules_cuda"],
+)
+
+cuda_library(
+    name = "injection_using_rules_cuda",
+    srcs = ["injection.cpp"],
+    hdrs = glob(include = ["common/*.h"]),
+    includes = [
+        "common",
+        "extensions/include",
+    ],
+    deps = [
+        ":prof_utils_rules_cuda",
+        "@local_cuda//:cuda_stub",
+        "@local_cuda//:cupti_so",
+        "@local_cuda//:nvperf_host_so",
+        "@local_cuda//:nvperf_target_so",
+    ],
+)
+
+cuda_library(
+    name = "prof_utils_rules_cuda",
+    srcs = [
+        "src/Eval.cpp",
+        "src/List.cpp",
+        "src/Metric.cpp",
+    ],
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":prof_utils_headers",
+        "@local_cuda//:cuda_stub",
+        "@local_cuda//:nvperf_host",
+        "@local_cuda//:nvperf_target",
+    ],
+)
+
+cc_library(
+    name = "prof_utils_headers",
+    hdrs = [
+        "include/Eval.h",
+        "include/FileOp.h",
+        "include/List.h",
+        "include/Metric.h",
+        "include/Parser.h",
+        "include/ScopeExit.h",
+        "include/Utils.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = ["@local_cuda//:cuda_headers"],
+)
+
+# cc_library(
+#     name = "prof_utils",
+#     srcs = [
+#         "src/Eval.cpp",
+#         "src/List.cpp",
+#         "src/Metric.cpp",
+#     ],
+#     copts = cuda_default_copts(),
+#     includes = ["include"],
+#     linkstatic = True,
+#     linkopts = ["-lcuda"],
+#     visibility = ["//visibility:public"],
+#     deps = [
+#         "//lib/extensions/include:prof_utils_headers",
+#         "@local_config_cuda//cuda:cuda_headers",
+#         "@local_cuda//:nvperf_host",
+#         "@local_cuda//:nvperf_target",
+#     ],
+# )
+
+# cc_library(
+#     name = "injection",
+#     srcs = [
+#         "injection.cpp",
+#     ],
+#     hdrs = glob(include = ["common/*.h"]),
+#     copts = cuda_default_copts(),
+#     includes = [
+#         "common",
+#         "extensions/include",
+#     ],
+#     deps = [
+#         # "//lib/extensions:prof_utils_static",
+#         "//lib/extensions:prof_utils",
+#         # "//lib/extensions/include:prof_utils_headers",
+#         "@local_cuda//:cuda_stub",
+#         "@local_cuda//:cupti_so",
+#         "@local_cuda//:nvperf_host_so",
+#         "@local_cuda//:nvperf_target_so",
+#     ],
+# )
+
+# cc_shared_library(
+#     name = "injection_shared",
+#     shared_lib_name = "injection.so",
+#     deps = [":injection"],
+# )
