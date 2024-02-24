@@ -1,0 +1,8 @@
+name: nlp  # Name of the conda environment
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - ipykernel
+  - ipywidgets
+  - numpy
