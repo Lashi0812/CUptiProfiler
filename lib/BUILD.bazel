@@ -1,13 +1,13 @@
 load("@rules_cuda//cuda:defs.bzl", "cuda_library")
 
 cc_shared_library(
-    name = "injection_shared_using_rules_cuda",
+    name = "injection_shared",
     shared_lib_name = "libinjection.so",
-    deps = [":injection_using_rules_cuda"],
+    deps = [":injection"],
 )
 
 cuda_library(
-    name = "injection_using_rules_cuda",
+    name = "injection",
     srcs = ["injection.cpp"],
     hdrs = glob(include = ["common/*.h"]),
     includes = [
@@ -15,7 +15,7 @@ cuda_library(
         "extensions/include",
     ],
     deps = [
-        ":prof_utils_rules_cuda",
+        ":prof_utils",
         "@local_cuda//:cuda_stub",
         "@local_cuda//:cupti_so",
         "@local_cuda//:nvperf_host_so",
@@ -24,7 +24,7 @@ cuda_library(
 )
 
 cuda_library(
-    name = "prof_utils_rules_cuda",
+    name = "prof_utils",
     srcs = [
         "src/Eval.cpp",
         "src/List.cpp",
