@@ -1,0 +1,7 @@
+CompileFlags:
+  Add :
+    - --cuda-gpu-arch=sm_89
+  Remove:
+    - -Xcuda-fatbinary*
+    - -nvcc_options*
+  

@@ -1,0 +1,63 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Generate the Compile Command",
+            "command": "source activate nlp && bazel run //tools/compile_command_extractor:refresh_compile_commands",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build cupti profile injection lib",
+            "command": "bazel build --config=rules_cuda //lib:injection_shared",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build example",
+            "command": "bazel build --config=rules_cuda //src:reduce",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Create directory",
+            "type": "shell",
+            "command": "mkdir -p profiles/\"$(echo ${input:exe} | sed 's@/[^/]*$@@')\""
+        },
+        {
+            "label": "Profile kernel",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "command": "env INJECTION_KERNEL_COUNT=2 CUDA_INJECTION64_PATH=./bazel-bin/lib/libinjection.so bazel-bin/${input:exe} ${input:app_args}",
+            "dependsOn": [
+                "Build cupti profile injection lib",
+                "Build example"
+            ]
+        }
+    ],
+    "inputs": [
+        // Refer for command : https://github.com/microsoft/vscode/issues/109789
+        {
+            "type": "command",
+            "id": "exe",
+            "command": "shellCommand.execute",
+            "args": {
+                "command": "ls -dF src/* | grep '*$' | sed 's/*$//'",
+                "cwd": "${workspaceFolder}/bazel-bin/",
+                "description": "Select Executable to Run",
+            }
+        },
+        {
+            "type": "promptString",
+            "id": "app_args",
+            "default": "16777216 256 256 1",
+            "description": "sepcify argument that pass to application"
+        }
+    ]
+}

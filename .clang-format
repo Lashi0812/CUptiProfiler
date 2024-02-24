@@ -1,0 +1,17 @@
+Language: Cpp
+IndentWidth: 4
+ObjCBlockIndentWidth: 2
+ContinuationIndentWidth: 2
+ColumnLimit: 120
+AlignAfterOpenBracket: AlwaysBreak
+AlignTrailingComments: true
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Left
+BinPackArguments: false
+BinPackParameters: false
+IndentCaseLabels: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AlwaysBreakTemplateDeclarations: 'Yes'
+SortIncludes: false
