@@ -1,16 +1,4 @@
-common --experimental_repo_remote_exec
 common --experimental_cc_shared_library
 
 build --flag_alias=cuda_archs=@rules_cuda//cuda:archs
 build:rules_cuda --cuda_archs=compute_89:compute_89,sm_89
-
-# build --@xla//xla/python:enable_gpu=false
-# build --action_env=TF_CUDA_VERSION=12
-# build --action_env=TF_CUDNN_VERSION=8
-
-# build:cuda --repo_env TF_NEED_CUDA=1
-# build:cuda --repo_env TF_NCCL_USE_STUB=1
-# build:cuda --action_env TF_CUDA_COMPUTE_CAPABILITIES="sm_80"
-# build:cuda --crosstool_top=@local_config_cuda//crosstool:toolchain
-# build:cuda --@local_config_cuda//:enable_cuda
-# build:cuda --linkopt=-Wl,--disable-new-dtags 
