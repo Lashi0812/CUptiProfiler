@@ -1,0 +1,15 @@
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+
+cuda_library(
+    name = "reduce_cu",
+    srcs = ["reduce.cu.cc"],
+    deps = [
+        "@local_cuda//:cuda_runtime",
+    ],
+)
+
+cc_binary(
+    name = "reduce",
+    deps = [":reduce_cu"],
+)
