@@ -44,6 +44,7 @@ using ::std::unordered_set;
 using ::std::vector;
 
 #include <stdlib.h>
+#include <cxxabi.h>
 
 // CUDA headers
 #include <cuda.h>
@@ -92,6 +93,8 @@ struct CtxProfilerData
     vector<uint8_t> counterDataPrefixImage;
     vector<uint8_t> counterDataScratchBufferImage;
     vector<uint8_t> configImage;
+    // for collecting function for print
+    vector<std::string> fnames;
     int             maxNumRanges;
     int             curRanges;
     int             maxRangeNameLength;
@@ -152,6 +155,9 @@ InitializeContextData(
     CtxProfilerData &contextData)
 {
     InitializeState();
+
+    // clear previous session the fnames
+    contextData.fnames.clear();
 
     // Get size of counterAvailabilityImage - in first pass, GetCounterAvailability return size needed for data.
     CUpti_Profiler_GetCounterAvailability_Params getCounterAvailabilityParams = { CUpti_Profiler_GetCounterAvailability_Params_STRUCT_SIZE };
@@ -261,7 +267,7 @@ PrintData(
     CtxProfilerData &contextData)
 {
     cout << endl << "Context " << contextData.ctx << ", device " << contextData.deviceId << " (" << contextData.deviceProp.name << ") session " << contextData.iterations << ":" << endl;
-    PrintMetricValues(contextData.deviceProp.name, contextData.counterDataImage, metricNames, contextData.counterAvailabilityImage.data());
+    PrintMetricValues(contextData.deviceProp.name, contextData.counterDataImage, metricNames,contextData.fnames ,contextData.counterAvailabilityImage.data());
 }
 
 // End a session during execution
@@ -321,7 +327,7 @@ ProfilerCallbackHandler(
     CUpti_CallbackId callbackId,
     void const *pCallbackData)
 {
-    static int initialized = 0;
+    static int initialized = 0;  
 
     CUptiResult res;
     if (domain == CUPTI_CB_DOMAIN_DRIVER_API)
@@ -353,7 +359,9 @@ ProfilerCallbackHandler(
                         InitializeContextData(contextData[ctx]);
                         StartSession(contextData[ctx]);
                     }
-
+                    // int status;
+                    // contextData[ctx].fnames.push_back(abi::__cxa_demangle(pData->symbolName,nullptr,nullptr,&status));
+                    contextData[ctx].fnames.push_back(pData->symbolName);
                     // Increment curRanges
                     contextData[ctx].curRanges++;
                 }
@@ -390,6 +398,7 @@ ProfilerCallbackHandler(
             if (params.isSupported == CUPTI_PROFILER_CONFIGURATION_SUPPORTED)
             {
                 // Update shared structures
+                std::cout << contextData.count(ctx)  << "creatinf " << std::endl;
                 contextData[ctx] = data;
                 InitializeContextData(contextData[ctx]);
             }

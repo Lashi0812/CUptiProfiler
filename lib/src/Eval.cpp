@@ -116,6 +116,7 @@ namespace NV {
             bool PrintMetricValues( std::string chipName, 
                                     const std::vector<uint8_t>& counterDataImage,
                                     const std::vector<std::string>& metricNames,
+                                    const std::vector<std::string>& fnames,
                                     const uint8_t* pCounterAvailabilityImage)
             {
                 if (!counterDataImage.size())
@@ -203,7 +204,7 @@ namespace NV {
                         evaluateToGpuValuesParams.pMetricValues = &metricValue;
                         RETURN_IF_NVPW_ERROR(false, NVPW_MetricsEvaluator_EvaluateToGpuValues(&evaluateToGpuValuesParams));
                         
-                        std::cout << std::setw(40) << std::left << rangeName << std::setw(100)
+                        std::cout << std::setw(40) << std::left << rangeName+"_"+fnames[rangeIndex].substr(0,35) << std::setw(100)
                                   << std::left << metricName << metricValue << std::endl;
                     }
                 }

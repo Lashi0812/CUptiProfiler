@@ -35,6 +35,7 @@ namespace NV {
             bool PrintMetricValues( std::string chipName,
                                     const std::vector<uint8_t>& counterDataImage,
                                     const std::vector<std::string>& metricNames,
+                                    const std::vector<std::string>& fnames,
                                     const uint8_t* pCounterAvailabilityImage = NULL);
             }
     }
